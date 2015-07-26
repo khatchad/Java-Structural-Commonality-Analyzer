@@ -8,13 +8,10 @@
 	<classpathentry kind="lib" path="lib/drools-core-6.2.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/mvel2-2.2.4.Final.jar"/>
 	<classpathentry kind="lib" path="lib/kie-api-6.2.0.Final.jar"/>
-	<classpathentry kind="lib" path="lib/jdom-2.0.6.jar" sourcepath="lib/jdom-2.0.6-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/edu.cuny.citytech.analyzecommonality.core/lib/jdom-2.0.6-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/kie-internal-6.2.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.4.7.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ca.mcgill.cs.swevo.jayfx"/>
+	<classpathentry kind="lib" path="/ca.mcgill.cs.swevo.jayfx/lib/jdom-2.0.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
