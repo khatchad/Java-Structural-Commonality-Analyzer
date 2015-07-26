@@ -7,11 +7,11 @@ Bundle-Activator: edu.cuny.citytech.analyzecommonality.ui.AnalyzeStructuralCommo
 Bundle-Vendor: New York City College of Technology, City University of New York
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.resources,
- ca.mcgill.cs.swevo.jayfx;bundle-version="0.0.3"
+ org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: edu.cuny.citytech.analyzecommonality.core.analysis,
+Import-Package: ca.mcgill.cs.swevo.jayfx.util,
+ edu.cuny.citytech.analyzecommonality.core.analysis,
  edu.cuny.citytech.analyzecommonality.core.model,
  org.eclipse.jdt.core,
  org.eclipse.jdt.internal.ui.util
