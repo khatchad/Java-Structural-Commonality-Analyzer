@@ -97,26 +97,32 @@ public abstract class StructuralCommonalityProcessor {
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToEnabledElementMap,
 			final String queryString) {
 
+		System.out.println("Session " + session);
 		final QueryResults suggestedNodes = session.getQueryResults(queryString);
-		lMonitor.beginTask("Executing node query: " + queryString + ".", suggestedNodes.size());
+		System.out.println("Executing node query: " + queryString + "." + suggestedNodes.size());
+		System.out.println("Results: " + suggestedNodes);
+		System.out.println("Result size: " + suggestedNodes.size());
 		for (final Iterator<QueryResultsRow> it = suggestedNodes.iterator(); it.hasNext();) {
 			final QueryResultsRow result = it.next();
-			final IntentionNode suggestedNode = (IntentionNode) result.get("$suggestedNode");
-
-			final IntentionNode enabledNode = (IntentionNode) result.get("$enabledNode");
-
-			final Path enabledPath = (Path) result.get("$enabledPath");
-
-			final IntentionNode commonNode = (IntentionNode) result.get("$commonNode");
-			final Pattern pattern = enabledPath.extractPattern(commonNode, enabledNode);
-
-			if (!patternToResultMap.containsKey(pattern))
-				patternToResultMap.put(pattern, new LinkedHashSet<GraphElement<IElement>>());
-			patternToResultMap.get(pattern).add(suggestedNode);
-
-			if (!patternToEnabledElementMap.containsKey(pattern))
-				patternToEnabledElementMap.put(pattern, new LinkedHashSet<GraphElement<IElement>>());
-			patternToEnabledElementMap.get(pattern).add(enabledNode);
+            IntentionNode<IElement> enabledNode = (IntentionNode<IElement>) result.get("$enabledNode");
+            System.out.println(enabledNode);
+            System.out.println("Selected? " + enabledNode.isSelected());
+//			final IntentionNode suggestedNode = (IntentionNode) result.get("$suggestedNode");
+//
+//			final IntentionNode enabledNode = (IntentionNode) result.get("$enabledNode");
+//
+//			final Path enabledPath = (Path) result.get("$enabledPath");
+//
+//			final IntentionNode commonNode = (IntentionNode) result.get("$commonNode");
+//			final Pattern pattern = enabledPath.extractPattern(commonNode, enabledNode);
+//
+//			if (!patternToResultMap.containsKey(pattern))
+//				patternToResultMap.put(pattern, new LinkedHashSet<GraphElement<IElement>>());
+//			patternToResultMap.get(pattern).add(suggestedNode);
+//
+//			if (!patternToEnabledElementMap.containsKey(pattern))
+//				patternToEnabledElementMap.put(pattern, new LinkedHashSet<GraphElement<IElement>>());
+//			patternToEnabledElementMap.get(pattern).add(enabledNode);
 
 			lMonitor.worked(1);
 		}
@@ -204,32 +210,32 @@ public abstract class StructuralCommonalityProcessor {
 		executeNodeQuery(new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), session,
 				patternToResultMap, patternToEnabledElementMap, "forward suggested execution nodes");
 
-		executeNodeQuery(new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), session,
-				patternToResultMap, patternToEnabledElementMap, "backward suggested execution nodes");
-
-		executeArcQuery("forward suggested X arcs", Relation.CALLS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("backward suggested X arcs", Relation.CALLS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("forward suggested X arcs", Relation.GETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("backward suggested X arcs", Relation.GETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("forward suggested X arcs", Relation.SETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("backward suggested X arcs", Relation.SETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+//		executeNodeQuery(new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), session,
+//				patternToResultMap, patternToEnabledElementMap, "backward suggested execution nodes");
+//
+//		executeArcQuery("forward suggested X arcs", Relation.CALLS, session, patternToResultMap,
+//				patternToEnabledElementMap,
+//				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+//
+//		executeArcQuery("backward suggested X arcs", Relation.CALLS, session, patternToResultMap,
+//				patternToEnabledElementMap,
+//				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+//
+//		executeArcQuery("forward suggested X arcs", Relation.GETS, session, patternToResultMap,
+//				patternToEnabledElementMap,
+//				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+//
+//		executeArcQuery("backward suggested X arcs", Relation.GETS, session, patternToResultMap,
+//				patternToEnabledElementMap,
+//				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+//
+//		executeArcQuery("forward suggested X arcs", Relation.SETS, session, patternToResultMap,
+//				patternToEnabledElementMap,
+//				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+//
+//		executeArcQuery("backward suggested X arcs", Relation.SETS, session, patternToResultMap,
+//				patternToEnabledElementMap,
+//				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 	}
 
 	public int getMaximumAnalysisDepth() {
