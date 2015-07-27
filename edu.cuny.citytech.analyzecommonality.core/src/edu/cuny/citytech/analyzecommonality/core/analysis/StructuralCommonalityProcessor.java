@@ -39,10 +39,6 @@ public abstract class StructuralCommonalityProcessor {
 
 	private static Logger logger = Logger.getLogger(StructuralCommonalityProcessor.class.getName());
 
-	private static final String SUGGESTED_ELEMENTS = "suggestedlements";
-
-	private static final String ENABLED_ELEMENTS = "enabledElements";
-
 	private static final String SIMULARITY = "simularity";
 
 	public static final int DEFAULT_MAXIMUM_ANALYSIS_DEPTH = 2;

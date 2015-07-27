@@ -21,5 +21,7 @@ Bundle-ClassPath: lib/antlr-runtime-3.5.jar,
  .,
  lib/kie-internal-6.2.0.Final.jar,
  lib/slf4j-api-1.7.2.jar,
- lib/xstream-1.4.7.jar
-Require-Bundle: ca.mcgill.cs.swevo.jayfx
+ lib/xstream-1.4.7.jar,
+ lib/protobuf-java-2.5.0.jar
+Require-Bundle: ca.mcgill.cs.swevo.jayfx,
+ org.eclipse.jdt.core;bundle-version="3.11.0"

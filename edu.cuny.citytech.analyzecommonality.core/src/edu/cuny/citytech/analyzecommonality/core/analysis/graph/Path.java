@@ -19,7 +19,7 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  * @author raffi
  * 
  */
-public class Path<E extends IntentionArc<IElement>> extends Stack<E>implements Serializable {
+public class Path<E extends IntentionArc<IElement>> extends Stack<E> implements Serializable {
 
 	/**
 	 * 
@@ -255,6 +255,10 @@ public class Path<E extends IntentionArc<IElement>> extends Stack<E>implements S
 			root.addContent(edgeXMLElem);
 		}
 		return root;
+	}
+
+	public synchronized int length() {
+		return super.size();
 	}
 
 }

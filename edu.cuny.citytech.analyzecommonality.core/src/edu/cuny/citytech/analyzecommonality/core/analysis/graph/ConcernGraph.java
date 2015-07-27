@@ -3,6 +3,8 @@
  */
 package edu.cuny.citytech.analyzecommonality.core.analysis.graph;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
@@ -10,10 +12,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.drools.core.io.impl.ReaderInputStream;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
@@ -26,8 +31,17 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.kie.api.KieBase;
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.model.KieBaseModel;
+import org.kie.api.builder.model.KieModuleModel;
+import org.kie.api.builder.model.KieSessionModel;
+import org.kie.api.conf.EqualityBehaviorOption;
+import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.api.runtime.rule.FactHandle;
 import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
@@ -134,7 +148,7 @@ public class ConcernGraph {
 		}
 		monitor.done();
 	}
-	
+
 	public void enableElementsAccordingTo(final Collection<? extends JavaElementSet> setCol,
 			final IProgressMonitor monitor) throws JavaModelException, ConversionException {
 
@@ -440,9 +454,14 @@ public class ConcernGraph {
 
 	private void setRulesBase(final IProgressMonitor monitor) throws Exception {
 		monitor.subTask("Loading up the rulebase.");
-		final Reader source = new InputStreamReader(StructuralCommonalityProcessor.class.getResourceAsStream(RULES_FILE));
+		final Reader source = new InputStreamReader(
+				StructuralCommonalityProcessor.class.getResourceAsStream(RULES_FILE));
 		final KieBase ruleBase = readRule(source);
-		final KieSession workingMemory = ruleBase.newKieSession();
+		
+		Assert.isTrue(ruleBase.getKieSessions().size() == 1);
+		
+		final KieSession workingMemory = ruleBase.getKieSessions().iterator().next();
+				
 		workingMemory.setGlobal("maximumAnalysisDepth", this.maximumAnalysisDepth);
 
 		final Set<GraphElement<IElement>> elemCol = this.flatten();
@@ -456,23 +475,44 @@ public class ConcernGraph {
 
 	private static KieBase readRule(final Reader source) throws Exception {
 		KieServices services = KieServices.Factory.get();
-		KieContainer container = services.getKieClasspathContainer();
+		KieModuleModel kieModuleModel = services.newKieModuleModel();
+
+		KieBaseModel kieBaseModel1 = kieModuleModel.newKieBaseModel("KBase1").setDefault(true)
+				.setEqualsBehavior(EqualityBehaviorOption.EQUALITY)
+				.setEventProcessingMode(EventProcessingOption.STREAM);
+
+		kieBaseModel1.newKieSessionModel("KSession1").setDefault(true).setType(KieSessionModel.KieSessionType.STATEFUL)
+				.setClockType(ClockTypeOption.get("realtime"));
+
+		KieFileSystem kfs = services.newKieFileSystem();
+		kfs.writeKModuleXML(kieModuleModel.toXML());
+
+		kfs.write("src/main/resources/KBase1/ruleSet1.drl",
+				services.getResources().newInputStreamResource(new ReaderInputStream(source)));
+
+		KieBuilder builder = services.newKieBuilder(kfs).buildAll();
+		List<Message> messages = builder.getResults().getMessages(Message.Level.ERROR);
+		messages.forEach(System.out::println);
+		Assert.isTrue(messages.isEmpty());
+
+		KieContainer container = services.newKieContainer(services.getRepository().getDefaultReleaseId());
+
 		KieSession session = container.newKieSession();
 
-//		final PackageBuilder builder = new PackageBuilder();
+		// final PackageBuilder builder = new PackageBuilder();
 
 		// this will parse and compile in one step
 		// NOTE: There are 2 methods here, the one argument one is for normal
 		// DRL.
-//		builder.addPackageFromDrl(source);
+		// builder.addPackageFromDrl(source);
 
 		// get the compiled package (which is serializable)
-//		final Package pkg = builder.getPackage();
+		// final Package pkg = builder.getPackage();
 
 		// add the package to a rulebase (deploy the rule package).
-//		final RuleBase ruleBase = RuleBaseFactory.newRuleBase();
-//		ruleBase.addPackage(pkg);
-//		return ruleBase;
+		// final RuleBase ruleBase = RuleBaseFactory.newRuleBase();
+		// ruleBase.addPackage(pkg);
+		// return ruleBase;
 		return session.getKieBase();
 	}
 

@@ -98,7 +98,7 @@ public class Pattern<E extends IntentionArc<IElement>> extends Path<E> {
 	 *            The concern graph used to produce the results.
 	 * @return The pattern simularity; also sets in the pattern.
 	 */
-	public double calculateSimularityToAdviceBasedOnResults(final Set<GraphElement<IElement>> patternResults,
+	public double calculateSimularityToJavaElementSetBasedOnResults(final Set<GraphElement<IElement>> patternResults,
 			final Set<GraphElement<IElement>> patternEnabledResults, ConcernGraph graph) {
 
 		double precision = calculatePrecision(patternEnabledResults, patternResults);

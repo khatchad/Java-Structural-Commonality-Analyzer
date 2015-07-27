@@ -7,7 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.jdom2.DocType;
+import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import edu.cuny.citytech.analyzecommonality.core.analysis.util.FileUtil;
 import edu.cuny.citytech.analyzecommonality.core.analysis.util.XMLUtil;
@@ -56,7 +60,7 @@ public class JavaElementSet {
 		return ret;
 	}
 
-	public PrintWriter getXMLFileWriter() throws IOException {
+	protected PrintWriter getXMLFileWriter() throws IOException {
 		String fileName = getRelativeXMLFileName();
 		final File aFile = new File(FileUtil.WORKSPACE_LOC, fileName);
 		PrintWriter ret = FileUtil.getPrintWriter(aFile, false);
@@ -77,5 +81,32 @@ public class JavaElementSet {
 		if (!aFile.exists())
 			throw new IllegalArgumentException("No XML file found for " + this);
 		return aFile;
+	}
+
+	public void writeXML(Element javaElementSetXMLElement) throws IOException {
+		DocType type = new DocType(this.getClass().getSimpleName());
+		Document doc = new Document(javaElementSetXMLElement, type);
+		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
+		PrintWriter xmlOut = getXMLFileWriter();
+		serializer.output(doc, xmlOut);
+		xmlOut.close();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("JavaElementSet [getSet()=");
+		builder.append(getSet());
+		builder.append(", getName()=");
+		builder.append(getName());
+		builder.append(", getType()=");
+		builder.append(getType());
+		builder.append(", getIdentifier()=");
+		builder.append(getIdentifier());
+		builder.append("]");
+		return builder.toString();
 	}
 }

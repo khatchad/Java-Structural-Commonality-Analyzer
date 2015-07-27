@@ -1,7 +1,6 @@
 package edu.cuny.citytech.analyzecommonality.core.analysis;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,11 +12,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.jdom2.DocType;
-import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -30,11 +25,11 @@ import edu.cuny.citytech.analyzecommonality.core.model.JavaElementSet;
 
 public class StructuralCommonalityAnalyzer extends StructuralCommonalityProcessor {
 
-	private static final String ENABLING_GRAPH_ELEMENTS_FOR_EACH_SET = "Enabling graph elements for each set of java elements.";
+	private static final String ENABLING_GRAPH_ELEMENTS_FOR_EACH_SET = "Enabling graph elements for each set ({0}) of java elements.";
 
-	private Map<JavaElementSet, Element> setToXMLMap = new LinkedHashMap<>();
+	private Map<JavaElementSet, Element> javaElementSetToXMLMap = new LinkedHashMap<>();
 
-	private Map<JavaElementSet, Set<Pattern<IntentionArc<IElement>>>> setToPatternSetMap = new LinkedHashMap<JavaElementSet, Set<Pattern<IntentionArc<IElement>>>>();
+	private Map<JavaElementSet, Set<Pattern<IntentionArc<IElement>>>> javaElementSetToPatternSetMap = new LinkedHashMap<JavaElementSet, Set<Pattern<IntentionArc<IElement>>>>();
 
 	private static Logger logger = Logger.getLogger(StructuralCommonalityAnalyzer.class.getName());
 
@@ -49,9 +44,13 @@ public class StructuralCommonalityAnalyzer extends StructuralCommonalityProcesso
 
 		monitor.beginTask(ENABLING_GRAPH_ELEMENTS_FOR_EACH_SET, setCol.size());
 
-		timeCollector.start();
+		if (timeCollector != null)
+			timeCollector.start();
+
 		logger.log(Level.INFO, ENABLING_GRAPH_ELEMENTS_FOR_EACH_SET, setCol.size());
-		timeCollector.stop();
+
+		if (timeCollector != null)
+			timeCollector.stop();
 
 		for (final JavaElementSet set : setCol) {
 
@@ -64,30 +63,38 @@ public class StructuralCommonalityAnalyzer extends StructuralCommonalityProcesso
 
 			for (final Pattern<IntentionArc<IElement>> pattern : patternToResultMap.keySet()) {
 				pattern.setElements(set);
-				pattern.calculateSimularityToAdviceBasedOnResults(patternToResultMap.get(pattern),
+				pattern.calculateSimularityToJavaElementSetBasedOnResults(patternToResultMap.get(pattern),
 						patternToEnabledElementMap.get(pattern), graph);
 			}
 
 			monitor.worked(1);
-			this.setToPatternSetMap.put(set, patternToResultMap.keySet());
+			this.javaElementSetToPatternSetMap.put(set, patternToResultMap.keySet());
 		}
 	}
 
 	public void writeXMLFile(IProgressMonitor monitor) throws IOException, CoreException {
-		Set<JavaElementSet> keySet = this.setToXMLMap.keySet();
+		Set<JavaElementSet> keySet = this.javaElementSetToXMLMap.keySet();
 		for (JavaElementSet set : keySet)
-			writeXMLFile(set, this.setToXMLMap.get(set), monitor);
+			writeXMLFile(set, this.javaElementSetToXMLMap.get(set), monitor);
 	}
 
-	protected void writeXMLFile(final JavaElementSet set, Element adviceXMLElement, IProgressMonitor monitor)
+	protected void writeXMLFile(final JavaElementSet set, Element javaElementSetXMLElement, IProgressMonitor monitor)
 			throws IOException, CoreException {
-		DocType type = new DocType(this.getClass().getSimpleName());
-		Document doc = new Document(adviceXMLElement, type);
-		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
-		PrintWriter xmlOut = set.getXMLFileWriter();
-		serializer.output(doc, xmlOut);
-		xmlOut.close();
-
+		set.writeXML(javaElementSetXMLElement);
 		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("StructuralCommonalityAnalyzer [javaElementSetToPatternSetMap=");
+		builder.append(javaElementSetToPatternSetMap);
+		builder.append(", getMaximumAnalysisDepth()=");
+		builder.append(getMaximumAnalysisDepth());
+		builder.append("]");
+		return builder.toString();
 	}
 }

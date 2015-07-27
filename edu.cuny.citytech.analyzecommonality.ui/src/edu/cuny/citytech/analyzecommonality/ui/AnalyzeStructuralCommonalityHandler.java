@@ -29,7 +29,9 @@ public class AnalyzeStructuralCommonalityHandler extends AbstractHandler {
 		
 		StructuralCommonalityAnalyzer analyzer = new StructuralCommonalityAnalyzer(1);
 		try {
-			analyzer.analyze(set, new NullProgressMonitor(), null);
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			analyzer.analyze(set, monitor, null);
+			System.out.println(analyzer);
 		} catch (Exception e) {
 			throw new ExecutionException(null, e);
 		}
