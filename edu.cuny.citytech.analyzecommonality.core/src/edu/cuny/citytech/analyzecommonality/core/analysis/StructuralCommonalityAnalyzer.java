@@ -58,6 +58,9 @@ public class StructuralCommonalityAnalyzer extends StructuralCommonalityProcesso
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>>();
 
 			graph.enableElementsAccordingTo(set, monitor);
+			
+			String dotFormat = graph.toDotFormat();
+			System.out.println(dotFormat);
 
 			executeQueries(graph.getWorkingMemory(), patternToResultMap, patternToEnabledElementMap, monitor);
 
