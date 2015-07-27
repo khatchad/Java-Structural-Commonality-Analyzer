@@ -58,9 +58,9 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 	public IntentionNode(E elem, boolean enabled) {
 		this(elem);
 		if (enabled)
-			this.enable();
+			this.select();
 		else
-			this.disable();
+			this.deselect();
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 		ret.append(" [label=\"");
 		ret.append(this.elem.getShortName());
 		ret.append('"');
-		if (this.isEnabled())
+		if (this.isSelected())
 			ret.append(",style=filled,color=red,fontcolor=white");
 		ret.append("];");
 		ret.append('\n');

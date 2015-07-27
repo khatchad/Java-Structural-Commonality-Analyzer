@@ -8,13 +8,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
-import org.eclipse.jdt.core.IJavaElement;
 import org.jdom2.Attribute;
 import org.jdom2.DataConversionException;
 import org.jdom2.Element;
-
-import ca.mcgill.cs.swevo.jayfx.ConversionException;
-import ca.mcgill.cs.swevo.jayfx.JayFX;
 
 /**
  * @author raffi
@@ -25,11 +21,11 @@ public abstract class GraphElement<E> implements Serializable {
 
 	private static final long serialVersionUID = 1905353972018475367L;
 
-	private static final String ENABLED = "enabled";
+	private static final String SELECTED = "selected";
 
 	private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
-	private boolean enabled;
+	private boolean selected;
 
 	/**
 	 * 
@@ -42,29 +38,29 @@ public abstract class GraphElement<E> implements Serializable {
 		this.changes.addPropertyChangeListener(l);
 	}
 
-	public void disable() {
-		final boolean oldState = this.enabled;
-		this.enabled = false;
-		if (oldState != this.enabled)
-			this.changes.firePropertyChange(new PropertyChangeEvent(this, ENABLED, oldState, this.enabled));
+	public void deselect() {
+		final boolean oldState = this.selected;
+		this.selected = false;
+		if (oldState != this.selected)
+			this.changes.firePropertyChange(new PropertyChangeEvent(this, SELECTED, oldState, this.selected));
 	}
 
 	/**
-	 * @param enabled
+	 * @param selected
 	 *            the enabled to set
 	 */
-	public void enable() {
-		final boolean oldState = this.enabled;
-		this.enabled = true;
-		if (oldState != this.enabled)
-			this.changes.firePropertyChange(new PropertyChangeEvent(this, ENABLED, oldState, this.enabled));
+	public void select() {
+		final boolean oldState = this.selected;
+		this.selected = true;
+		if (oldState != this.selected)
+			this.changes.firePropertyChange(new PropertyChangeEvent(this, SELECTED, oldState, this.selected));
 	}
 
 	/**
 	 * @return the enabled
 	 */
-	public boolean isEnabled() {
-		return this.enabled;
+	public boolean isSelected() {
+		return this.selected;
 	}
 
 	public void removePropertyChangeListener(final PropertyChangeListener l) {
@@ -73,7 +69,7 @@ public abstract class GraphElement<E> implements Serializable {
 
 	@Override
 	public String toString() {
-		return this.enabled ? "*" : "";
+		return this.selected ? "*" : "";
 	}
 
 	/**
@@ -81,17 +77,17 @@ public abstract class GraphElement<E> implements Serializable {
 	 */
 	public Element getXML() {
 		Element ret = new Element(this.getClass().getSimpleName());
-		ret.setAttribute(ENABLED, String.valueOf(this.isEnabled()));
+		ret.setAttribute(SELECTED, String.valueOf(this.isSelected()));
 		return ret;
 	}
 
-	public static boolean isEnabled(Element elem) throws DataConversionException {
-		Attribute enabledAttribute = elem.getAttribute(ENABLED);
+	public static boolean isSelected(Element elem) throws DataConversionException {
+		Attribute enabledAttribute = elem.getAttribute(SELECTED);
 		return enabledAttribute.getBooleanValue();
 	}
 
 	public GraphElement(Element elem) throws DataConversionException {
-		this.enabled = isEnabled(elem);
+		this.selected = isSelected(elem);
 	}
 
 	/**
