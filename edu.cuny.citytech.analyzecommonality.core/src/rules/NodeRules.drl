@@ -1,14 +1,14 @@
-// created on: Apr 17, 2008
+# created on: Apr 17, 2008
 package NodeRules
 
-// list any import classes here.
+# list any import classes here.
 import edu.cuny.citytech.analyzecommonality.core.analysis.graph.*;
 import ca.mcgill.cs.swevo.jayfx.model.*;
 
-// declare any global variables here
+# declare any global variables here
 global Integer maximumAnalysisDepth
 
-// Two nodes are connected when there is an arc in between them. (base case).
+# Two nodes are connected when there is an arc in between them. (base case).
 rule "connected"
 	when
 		$arc : IntentionArc()
@@ -21,7 +21,7 @@ end
 rule "path building"
 	when
 		$arc : IntentionArc($source : fromNode, $target : toNode)
-		$path : Path(size < maximumAnalysisDepth, topNode == $target, tailNodes not contains $source) // TODO: more work here?
+		$path : Path(size < maximumAnalysisDepth, topNode == $target, tailNodes not contains $source) # TODO: more work here?
 	then
 		Path aPath = (Path)$path.clone();
 		aPath.push($arc);
@@ -34,28 +34,28 @@ end
 
 query "forward suggested execution nodes"
 	$enabledNode : IntentionNode(enabled == true)
-	$enabledPath : Path(firstNode == $enabledNode, $commonNode : lastNode, $enabledSize : length)
+	$enabledPath : Path(firstNode == $enabledNode, $commonNode : lastNode, $enabledSize : size)
 	$intersectingPath : Path($suggestedNode : firstNode, lastNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end
 
 query "backward suggested execution nodes"
 	$enabledNode : IntentionNode(enabled == true)
-	$enabledPath : Path(lastNode == $enabledNode, $commonNode : firstNode, $enabledSize : length)
+	$enabledPath : Path(lastNode == $enabledNode, $commonNode : firstNode, $enabledSize : size)
 	$intersectingPath : Path($suggestedNode : lastNode, firstNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end
 
 query "forward suggested X arcs" (Relation x)
 	$enabledArc : IntentionArc(enabled == true, type == x)
-	$enabledPath : Path(firstArc == $enabledArc, $commonNode : lastNode, $enabledSize : length)
+	$enabledPath : Path(firstArc == $enabledArc, $commonNode : lastNode, $enabledSize : size)
 	$intersectingPath : Path($suggestedArc : firstArc, lastNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end
 
 query "backward suggested X arcs" (Relation x)
 	$enabledArc : IntentionArc(enabled == true, type == x)
-	$enabledPath : Path(lastArc == $enabledArc, $commonNode : firstNode, $enabledSize : length)
+	$enabledPath : Path(lastArc == $enabledArc, $commonNode : firstNode, $enabledSize : size)
 	$intersectingPath : Path($suggestedArc : lastArc, firstNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end

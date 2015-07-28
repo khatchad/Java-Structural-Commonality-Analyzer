@@ -13,15 +13,11 @@ Import-Package: org.eclipse.core.resources,
  org.eclipse.jdt.internal.core
 Export-Package: edu.cuny.citytech.analyzecommonality.core.analysis,
  edu.cuny.citytech.analyzecommonality.core.model
-Bundle-ClassPath: lib/antlr-runtime-3.5.jar,
- lib/drools-compiler-6.2.0.Final.jar,
- lib/drools-core-6.2.0.Final.jar,
- lib/kie-api-6.2.0.Final.jar,
- lib/mvel2-2.2.4.Final.jar,
- .,
- lib/kie-internal-6.2.0.Final.jar,
- lib/slf4j-api-1.7.2.jar,
- lib/xstream-1.4.7.jar,
- lib/protobuf-java-2.5.0.jar
 Require-Bundle: ca.mcgill.cs.swevo.jayfx,
  org.eclipse.jdt.core;bundle-version="3.11.0"
+Bundle-ClassPath: lib/antlr-runtime-3.0.jar,
+ lib/drools-compiler-4.0.4.jar,
+ lib/drools-core-4.0.4.jar,
+ lib/jdom-2.0.6.jar,
+ lib/mvel14-1.2.21.jar,
+ .

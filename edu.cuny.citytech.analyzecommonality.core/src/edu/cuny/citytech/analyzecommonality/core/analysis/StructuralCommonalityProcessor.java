@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.rule.QueryResults;
-import org.kie.api.runtime.rule.QueryResultsRow;
+import org.drools.WorkingMemory;
+import org.drools.QueryResult;
+import org.drools.QueryResults;
 
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -52,7 +52,7 @@ public abstract class StructuralCommonalityProcessor {
 	 * @param lMonitor
 	 */
 	@SuppressWarnings("unchecked")
-	private static void executeArcQuery(final String queryString, final Relation relation, final KieSession session,
+	private static void executeArcQuery(final String queryString, final Relation relation, final WorkingMemory session,
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToResultMap,
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToEnabledElementMap,
 			final IProgressMonitor lMonitor) {
@@ -61,8 +61,8 @@ public abstract class StructuralCommonalityProcessor {
 
 		lMonitor.beginTask("Executing query: " + queryString.replace("X", relation.toString()) + ".",
 				suggestedArcs.size());
-		for (final Iterator<QueryResultsRow> it = suggestedArcs.iterator(); it.hasNext();) {
-			final QueryResultsRow result = it.next();
+		for (final Iterator<QueryResult> it = suggestedArcs.iterator(); it.hasNext();) {
+			final QueryResult result = it.next();
 			final IntentionArc suggestedArc = (IntentionArc) result.get("$suggestedArc");
 
 			final IntentionArc enabledArc = (IntentionArc) result.get("$enabledArc");
@@ -92,15 +92,15 @@ public abstract class StructuralCommonalityProcessor {
 	 * @param patternToEnabledElementMap
 	 */
 	@SuppressWarnings("unchecked")
-	private static void executeNodeQuery(final IProgressMonitor lMonitor, final KieSession session,
+	private static void executeNodeQuery(final IProgressMonitor lMonitor, final WorkingMemory session,
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToResultMap,
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToEnabledElementMap,
 			final String queryString) {
 
 		final QueryResults suggestedNodes = session.getQueryResults(queryString);
 		lMonitor.beginTask("Executing node query: " + queryString + ".", suggestedNodes.size());
-		for (final Iterator<QueryResultsRow> it = suggestedNodes.iterator(); it.hasNext();) {
-			final QueryResultsRow result = it.next();
+		for (final Iterator<QueryResult> it = suggestedNodes.iterator(); it.hasNext();) {
+			final QueryResult result = it.next();
 			final IntentionNode suggestedNode = (IntentionNode) result.get("$suggestedNode");
 
 			final IntentionNode enabledNode = (IntentionNode) result.get("$enabledNode");
@@ -196,7 +196,7 @@ public abstract class StructuralCommonalityProcessor {
 	 * @param patternToEnabledElementMap
 	 * @param monitor
 	 */
-	protected void executeQueries(final KieSession session,
+	protected void executeQueries(final WorkingMemory session,
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToResultMap,
 			final Map<Pattern<IntentionArc<IElement>>, Set<GraphElement<IElement>>> patternToEnabledElementMap,
 			final IProgressMonitor monitor) {

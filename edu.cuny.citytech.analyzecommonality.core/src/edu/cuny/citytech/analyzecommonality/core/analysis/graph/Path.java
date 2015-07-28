@@ -11,7 +11,7 @@ import java.util.Stack;
 
 import org.jdom2.DataConversionException;
 import org.jdom2.Element;
-import org.kie.api.runtime.ObjectFilter;
+import org.drools.ObjectFilter;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
@@ -255,10 +255,6 @@ public class Path<E extends IntentionArc<IElement>> extends Stack<E> implements 
 			root.addContent(edgeXMLElem);
 		}
 		return root;
-	}
-
-	public synchronized int length() {
-		return super.size();
 	}
 
 }
