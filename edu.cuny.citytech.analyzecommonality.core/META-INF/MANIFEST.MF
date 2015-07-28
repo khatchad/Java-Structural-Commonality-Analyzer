@@ -20,4 +20,5 @@ Bundle-ClassPath: lib/antlr-runtime-3.0.jar,
  lib/drools-core-4.0.4.jar,
  lib/jdom-2.0.6.jar,
  lib/mvel14-1.2.21.jar,
- .
+ .,
+ lib/commons-csv-1.1.jar

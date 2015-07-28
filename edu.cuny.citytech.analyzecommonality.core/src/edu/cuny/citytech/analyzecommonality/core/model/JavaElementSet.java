@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.eclipse.jdt.core.IJavaElement;
 import org.jdom2.DocType;
 import org.jdom2.Document;
@@ -108,5 +110,15 @@ public class JavaElementSet {
 		builder.append(getIdentifier());
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public static Stream<String> getCSVHeader() {
+		return Stream.of("Set ID", "Set Name", "Set Type");
+	}
+
+	public void dumpCSV(CSVPrinter printer) throws IOException {
+		printer.print(this.getIdentifier());
+		printer.print(this.getName());
+		printer.print(this.getType());
 	}
 }

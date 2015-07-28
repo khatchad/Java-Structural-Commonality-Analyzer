@@ -2,12 +2,16 @@ package edu.cuny.citytech.analyzecommonality.core.analysis;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -84,7 +88,9 @@ public class StructuralCommonalityAnalyzer extends StructuralCommonalityProcesso
 		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -96,5 +102,27 @@ public class StructuralCommonalityAnalyzer extends StructuralCommonalityProcesso
 		builder.append(getMaximumAnalysisDepth());
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public void dumpCSV(Appendable writer) throws IOException {
+		Stream<String> header = getCSVHeader();
+
+		CSVFormat format = CSVFormat.EXCEL.withHeader(header.toArray(String[]::new)).withCommentMarker('#')
+				.withHeaderComments("Maximum analysis depth: " + this.getMaximumAnalysisDepth());
+
+		CSVPrinter printer = format.print(writer);
+
+		Iterator<Pattern<IntentionArc<IElement>>> iterator = this.javaElementSetToPatternSetMap.values().stream()
+				.flatMap(Collection::stream).distinct().iterator();
+
+		while (iterator.hasNext()) {
+			Pattern<IntentionArc<IElement>> pattern = iterator.next();
+			pattern.dumpCSV(printer);
+			printer.println();
+		}
+	}
+
+	protected static Stream<String> getCSVHeader() {
+		return Pattern.getCSVHeader();
 	}
 }

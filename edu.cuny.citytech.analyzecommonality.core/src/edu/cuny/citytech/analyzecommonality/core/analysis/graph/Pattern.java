@@ -3,9 +3,12 @@
  */
 package edu.cuny.citytech.analyzecommonality.core.analysis.graph;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 
@@ -111,5 +114,33 @@ public class Pattern<E extends IntentionArc<IElement>> extends Path<E> {
 
 		this.setSimularity(simularity);
 		return simularity;
+	}
+
+	public static Stream<String> getCSVHeader() {
+		Stream<String> elementHeader = JavaElementSet.getCSVHeader();
+		Stream<String> patternHeader = Stream.of("Pattern", "Simularity");
+		return Stream.concat(elementHeader, patternHeader);
+	}
+	
+	public void dumpCSV(CSVPrinter printer) throws IOException {
+		this.set.dumpCSV(printer);
+		printer.print(super.toString());
+		printer.print(this.getSimularity());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Pattern [getElements()=");
+		builder.append(getElements());
+		builder.append(", getSimularity()=");
+		builder.append(getSimularity());
+		builder.append(", pattern=");
+		builder.append(super.toString());
+		builder.append("]");
+		return builder.toString();
 	}
 }
