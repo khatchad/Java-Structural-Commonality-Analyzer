@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Analyze Structural Commonality UI
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: edu.cuny.citytech.analyzecommonality.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.cuny.citytech.analyzecommonality.ui.AnalyzeStructuralCommonalityPlugin
-Bundle-Vendor: New York City College of Technology, City University of New York
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources
@@ -15,3 +15,4 @@ Import-Package: ca.mcgill.cs.swevo.jayfx.util,
  edu.cuny.citytech.analyzecommonality.core.model,
  org.eclipse.jdt.core,
  org.eclipse.jdt.internal.ui.util
+Export-Package: edu.cuny.citytech.analyzecommonality.ui
