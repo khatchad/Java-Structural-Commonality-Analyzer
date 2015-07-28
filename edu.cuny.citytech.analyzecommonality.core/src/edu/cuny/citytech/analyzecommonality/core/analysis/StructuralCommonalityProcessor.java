@@ -206,30 +206,6 @@ public abstract class StructuralCommonalityProcessor {
 
 		executeNodeQuery(new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), session,
 				patternToResultMap, patternToEnabledElementMap, "backward suggested execution nodes");
-
-		executeArcQuery("forward suggested X arcs", Relation.CALLS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("backward suggested X arcs", Relation.CALLS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("forward suggested X arcs", Relation.GETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("backward suggested X arcs", Relation.GETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("forward suggested X arcs", Relation.SETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-		executeArcQuery("backward suggested X arcs", Relation.SETS, session, patternToResultMap,
-				patternToEnabledElementMap,
-				new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 	}
 
 	public int getMaximumAnalysisDepth() {
