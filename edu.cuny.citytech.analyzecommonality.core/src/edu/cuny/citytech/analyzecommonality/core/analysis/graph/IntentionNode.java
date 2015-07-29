@@ -38,10 +38,6 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 
 	private final Map<Relation, Set<IntentionArc<E>>> relationToArcSetMap = new LinkedHashMap<Relation, Set<IntentionArc<E>>>();
 
-	private IntentionNode() {
-		initializeRelationToArcSetMap();
-	}
-
 	private void initializeRelationToArcSetMap() {
 		for (Relation relation : Relation.values())
 			this.relationToArcSetMap.put(relation, new LinkedHashSet<IntentionArc<E>>());
@@ -50,17 +46,23 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 	/**
 	 * @param elem
 	 */
+	private IntentionNode(boolean enabled) {
+		super(enabled);
+		initializeRelationToArcSetMap();
+	}
+	
+	@SuppressWarnings("unused")
+	private IntentionNode() {
+		this(false);
+	}
+
 	public IntentionNode(final E elem) {
-		this();
-		this.elem = elem;
+		this(elem, false);
 	}
 
 	public IntentionNode(E elem, boolean enabled) {
-		this(elem);
-		if (enabled)
-			this.select();
-		else
-			this.deselect();
+		this(enabled);
+		this.elem = elem;
 	}
 
 	/**

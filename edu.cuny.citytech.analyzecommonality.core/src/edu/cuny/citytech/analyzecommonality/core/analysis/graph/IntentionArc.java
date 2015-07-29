@@ -36,7 +36,12 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 	/**
 	 * 
 	 */
+	public IntentionArc(boolean enabled) {
+		super(enabled);
+	}
+
 	public IntentionArc() {
+		this(false);
 	}
 
 	/**
@@ -44,7 +49,8 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 	 * @param to
 	 * @param type
 	 */
-	public IntentionArc(final IntentionNode<E> from, final IntentionNode<E> to, final Relation type) {
+	public IntentionArc(final IntentionNode<E> from, final IntentionNode<E> to, final Relation type, boolean enabled) {
+		super(enabled);
 		this.fromNode = from;
 		this.toNode = to;
 		this.type = type;
@@ -56,13 +62,8 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 	 * @param relation
 	 * @param enableEdgesForIncommingRelation
 	 */
-	public IntentionArc(final IntentionNode<E> from, final IntentionNode<E> to, final Relation type,
-			final boolean enabled) {
-		this(from, to, type);
-		if (enabled)
-			this.select();
-		else
-			this.deselect();
+	public IntentionArc(final IntentionNode<E> from, final IntentionNode<E> to, final Relation type) {
+		this(from, to, type, false);
 	}
 
 	/**

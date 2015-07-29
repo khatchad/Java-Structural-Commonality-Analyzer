@@ -30,8 +30,9 @@ public abstract class GraphElement<E> implements Serializable {
 	/**
 	 * 
 	 */
-	public GraphElement() {
+	public GraphElement(boolean selected) {
 		super();
+		this.setSelected(selected);
 	}
 
 	public void addPropertyChangeListener(final PropertyChangeListener l) {
@@ -39,10 +40,7 @@ public abstract class GraphElement<E> implements Serializable {
 	}
 
 	public void deselect() {
-		final boolean oldState = this.selected;
-		this.selected = false;
-		if (oldState != this.selected)
-			this.changes.firePropertyChange(new PropertyChangeEvent(this, SELECTED, oldState, this.selected));
+		this.setSelected(false);
 	}
 
 	/**
@@ -50,17 +48,21 @@ public abstract class GraphElement<E> implements Serializable {
 	 *            the enabled to set
 	 */
 	public void select() {
-		final boolean oldState = this.selected;
-		this.selected = true;
-		if (oldState != this.selected)
-			this.changes.firePropertyChange(new PropertyChangeEvent(this, SELECTED, oldState, this.selected));
+		this.setSelected(true);
 	}
 
 	/**
 	 * @return the enabled
 	 */
 	public boolean isSelected() {
-		return this.selected;
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		final boolean oldState = this.selected;
+		this.selected = selected;
+		if (oldState != this.selected)
+			this.changes.firePropertyChange(new PropertyChangeEvent(this, SELECTED, oldState, this.selected));
 	}
 
 	public void removePropertyChangeListener(final PropertyChangeListener l) {
@@ -87,7 +89,7 @@ public abstract class GraphElement<E> implements Serializable {
 	}
 
 	public GraphElement(Element elem) throws DataConversionException {
-		this.selected = isSelected(elem);
+		this.setSelected(isSelected(elem));
 	}
 
 	/**
