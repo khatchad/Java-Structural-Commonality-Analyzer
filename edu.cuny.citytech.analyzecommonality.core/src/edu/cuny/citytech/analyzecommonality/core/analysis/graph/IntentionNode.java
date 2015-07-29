@@ -43,9 +43,6 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 			this.relationToArcSetMap.put(relation, new LinkedHashSet<IntentionArc<E>>());
 	}
 
-	/**
-	 * @param elem
-	 */
 	private IntentionNode(boolean enabled) {
 		super(enabled);
 		initializeRelationToArcSetMap();
@@ -65,10 +62,6 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 		this.elem = elem;
 	}
 
-	/**
-	 * @param xmlElem
-	 * @throws DataConversionException
-	 */
 	public IntentionNode(Element xmlElem) throws DataConversionException {
 		super(xmlElem);
 		Element elementXML = xmlElem.getChild(IElement.class.getSimpleName());
@@ -76,9 +69,6 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 		initializeRelationToArcSetMap();
 	}
 
-	/**
-	 * @param intentionNode
-	 */
 	public void addArc(final IntentionArc<E> intentionArc) {
 		this.arcs.add(intentionArc);
 
@@ -98,24 +88,14 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 		return obj instanceof IntentionNode ? this.elem.equals(((IntentionNode) obj).elem) : false;
 	}
 
-	/**
-	 * @return the arcs
-	 */
 	public Set<IntentionArc<E>> getArcs() {
 		return this.arcs;
 	}
 
-	/**
-	 * @return the elem
-	 */
 	public E getElem() {
 		return this.elem;
 	}
 
-	/**
-	 * @param advises
-	 * @return
-	 */
 	// public boolean hasEdge(final Relation relation) {
 	// for (final IntentionArc<E> arc : this.arcs)
 	// if (arc.getType().equals(relation))
@@ -123,10 +103,6 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 	// return false;
 	// }
 
-	/**
-	 * @param relation
-	 * @return
-	 */
 	// public boolean hasEnabledEdgesForIncommingRelation(final Relation
 	// relation) {
 	// return this.elem.hasEnabledRelationFor(relation);
@@ -207,11 +183,6 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 		return this.toString();
 	}
 
-	/**
-	 * @param targetNode
-	 * @param calls
-	 * @return
-	 */
 	public IntentionArc<E> getArc(IntentionNode<IElement> targetNode, Relation relation) {
 		for (IntentionArc<E> arc : this.relationToArcSetMap.get(relation))
 			if (arc.getToNode().equals(targetNode))
@@ -222,9 +193,7 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 	/**
 	 * Converts this IntentionNode into its corresponding IJavaElement.
 	 * 
-	 * @param fastConverter
 	 * @return The IJavaElement representing this IntentionElement.
-	 * @throws ConversionException
 	 */
 	public IJavaElement toJavaElement(JayFX database) {
 		IJavaElement javaElement = null;

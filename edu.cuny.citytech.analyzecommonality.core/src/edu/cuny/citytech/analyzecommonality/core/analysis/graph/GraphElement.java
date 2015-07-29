@@ -27,9 +27,6 @@ public abstract class GraphElement<E> implements Serializable {
 
 	private boolean selected;
 
-	/**
-	 * 
-	 */
 	public GraphElement(boolean selected) {
 		super();
 		this.setSelected(selected);
@@ -43,17 +40,10 @@ public abstract class GraphElement<E> implements Serializable {
 		this.setSelected(false);
 	}
 
-	/**
-	 * @param selected
-	 *            the enabled to set
-	 */
 	public void select() {
 		this.setSelected(true);
 	}
 
-	/**
-	 * @return the enabled
-	 */
 	public boolean isSelected() {
 		return selected;
 	}
@@ -74,9 +64,6 @@ public abstract class GraphElement<E> implements Serializable {
 		return this.selected ? "*" : "";
 	}
 
-	/**
-	 * @return
-	 */
 	public Element getXML() {
 		Element ret = new Element(this.getClass().getSimpleName());
 		ret.setAttribute(SELECTED, String.valueOf(this.isSelected()));
@@ -92,13 +79,7 @@ public abstract class GraphElement<E> implements Serializable {
 		this.setSelected(isSelected(elem));
 	}
 
-	/**
-	 * @return
-	 */
 	public abstract String getLongDescription();
 
-	/**
-	 * @return
-	 */
 	public abstract String toPrettyString();
 }

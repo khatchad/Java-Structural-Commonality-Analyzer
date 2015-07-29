@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.cuny.citytech.analyzecommonality.core.analysis.graph;
 
 import org.jdom2.DataConversionException;
@@ -15,14 +12,8 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  */
 public class IntentionArc<E extends IElement> extends GraphElement<E> {
 
-	/**
-	 * 
-	 */
 	private static final String SOURCE = "source";
 
-	/**
-	 * 
-	 */
 	private static final String TARGET = "target";
 
 	private static final long serialVersionUID = -4758844315757084370L;
@@ -33,9 +24,6 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 
 	private Relation type;
 
-	/**
-	 * 
-	 */
 	public IntentionArc(boolean enabled) {
 		super(enabled);
 	}
@@ -44,11 +32,6 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 		this(false);
 	}
 
-	/**
-	 * @param from
-	 * @param to
-	 * @param type
-	 */
 	public IntentionArc(final IntentionNode<E> from, final IntentionNode<E> to, final Relation type, boolean enabled) {
 		super(enabled);
 		this.fromNode = from;
@@ -56,20 +39,10 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 		this.type = type;
 	}
 
-	/**
-	 * @param node
-	 * @param toNode
-	 * @param relation
-	 * @param enableEdgesForIncommingRelation
-	 */
 	public IntentionArc(final IntentionNode<E> from, final IntentionNode<E> to, final Relation type) {
 		this(from, to, type, false);
 	}
 
-	/**
-	 * @param elem
-	 * @throws DataConversionException
-	 */
 	public IntentionArc(Element elem) throws DataConversionException {
 		super(elem);
 
@@ -83,10 +56,6 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 		this.toNode = recoverNode(targetElem);
 	}
 
-	/**
-	 * @param sourceElem
-	 * @throws DataConversionException
-	 */
 	private static <E extends IElement> IntentionNode<E> recoverNode(Element sourceElem)
 			throws DataConversionException {
 		if (WildcardElement.isWildcardElement(sourceElem.getChild(IElement.class.getSimpleName())))
@@ -101,7 +70,6 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(final Object obj) {
 		return obj instanceof IntentionArc ? this.fromNode.equals(((IntentionArc) obj).fromNode)
@@ -109,23 +77,14 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 				: false;
 	}
 
-	/**
-	 * @return the from
-	 */
 	public IntentionNode<E> getFromNode() {
 		return this.fromNode;
 	}
 
-	/**
-	 * @return the to
-	 */
 	public IntentionNode<E> getToNode() {
 		return this.toNode;
 	}
 
-	/**
-	 * @return the type
-	 */
 	public Relation getType() {
 		return this.type;
 	}
@@ -142,10 +101,6 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 		return this.fromNode.hashCode() + this.toNode.hashCode() + this.type.hashCode();
 	}
 
-	/**
-	 * @param fromNode
-	 *            the fromNode to set
-	 */
 	// public void setFromNode(final IntentionNode<E> fromNode) {
 	// this.fromNode = fromNode;
 	// }
@@ -157,10 +112,6 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 	// public void setToNode(final IntentionNode<E> toNode) {
 	// this.toNode = toNode;
 	// }
-	/**
-	 * @param type
-	 *            the type to set
-	 */
 	// public void setType(final Relation type) {
 	// this.type = type;
 	// }

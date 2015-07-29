@@ -457,11 +457,11 @@ public class ConcernGraph {
 		final Reader source = new InputStreamReader(
 				StructuralCommonalityProcessor.class.getResourceAsStream(RULES_FILE));
 		final KieBase ruleBase = readRule(source);
-		
+
 		Assert.isTrue(ruleBase.getKieSessions().size() == 1);
-		
+
 		final KieSession workingMemory = ruleBase.getKieSessions().iterator().next();
-				
+
 		workingMemory.setGlobal("maximumAnalysisDepth", this.maximumAnalysisDepth);
 
 		final Set<GraphElement<IElement>> elemCol = this.flatten();
