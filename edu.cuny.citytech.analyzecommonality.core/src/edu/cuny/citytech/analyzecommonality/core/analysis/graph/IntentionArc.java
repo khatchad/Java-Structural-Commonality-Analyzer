@@ -59,7 +59,7 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 	private static <E extends IElement> IntentionNode<E> recoverNode(Element sourceElem)
 			throws DataConversionException {
 		if (WildcardElement.isWildcardElement(sourceElem.getChild(IElement.class.getSimpleName())))
-			return (IntentionNode<E>) (GraphElement.isSelected(sourceElem) ? IntentionNode.ENABLED_WILDCARD
+			return (IntentionNode<E>) (GraphElement.isEnabled(sourceElem) ? IntentionNode.ENABLED_WILDCARD
 					: IntentionNode.DISABLED_WILDCARD);
 		else
 			return new IntentionNode<E>(sourceElem);
@@ -125,7 +125,7 @@ public class IntentionArc<E extends IElement> extends GraphElement<E> {
 		ret.append("\"");
 		ret.append(this.type.getFullCode());
 		ret.append("\"");
-		if (this.isSelected())
+		if (this.isEnabled())
 			ret.append(",style=bold,color=red,fontcolor=red");
 		ret.append("];");
 		return ret.toString();

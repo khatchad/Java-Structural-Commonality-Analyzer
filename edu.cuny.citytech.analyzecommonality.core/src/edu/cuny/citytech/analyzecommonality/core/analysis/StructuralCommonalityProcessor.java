@@ -106,7 +106,7 @@ public abstract class StructuralCommonalityProcessor {
 			final QueryResultsRow result = it.next();
             IntentionNode<IElement> enabledNode = (IntentionNode<IElement>) result.get("$enabledNode");
             System.out.println(enabledNode);
-            System.out.println("Selected? " + enabledNode.isSelected());
+            System.out.println("Enabled? " + enabledNode.isEnabled());
 //			final IntentionNode suggestedNode = (IntentionNode) result.get("$suggestedNode");
 //
 //			final IntentionNode enabledNode = (IntentionNode) result.get("$enabledNode");

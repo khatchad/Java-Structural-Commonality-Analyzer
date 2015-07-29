@@ -198,7 +198,7 @@ public class ConcernGraph {
 
 			IntentionNode<IElement> toEnableNode = this.elementToNodeMap.get(toEnableElement);
 
-			toEnableNode.select();
+			toEnableNode.disable();
 
 			break;
 		}
@@ -218,7 +218,7 @@ public class ConcernGraph {
 						throw new IllegalStateException("In trouble!");
 
 					IntentionNode<IElement> toEnableNode = this.elementToNodeMap.get(toEnableElement);
-					toEnableNode.select();
+					toEnableNode.disable();
 
 				}
 
@@ -301,7 +301,7 @@ public class ConcernGraph {
 				arcToEnable = new IntentionArc<IElement>(sourceNode, targetNode, relation);
 				sourceNode.addArc(arcToEnable);
 			}
-			arcToEnable.select();
+			arcToEnable.disable();
 		}
 	}
 
@@ -332,7 +332,7 @@ public class ConcernGraph {
 		Set<GraphElement<IElement>> allElements = this.flatten();
 		monitor.beginTask("Disabling intention elements.", allElements.size());
 		for (final GraphElement<IElement> elem : allElements) {
-			elem.deselect();
+			elem.enable();
 			monitor.worked(1);
 		}
 		monitor.done();
@@ -341,10 +341,10 @@ public class ConcernGraph {
 	public Set<GraphElement<IElement>> getEnabledElements() {
 		final Set<GraphElement<IElement>> ret = new LinkedHashSet<GraphElement<IElement>>();
 		for (final IntentionNode<IElement> node : this.getNodes()) {
-			if (node.isSelected())
+			if (node.isEnabled())
 				ret.add(node);
 			for (final IntentionArc<IElement> arc : node.getArcs())
-				if (arc.isSelected())
+				if (arc.isEnabled())
 					ret.add(arc);
 		}
 		return ret;
@@ -429,7 +429,7 @@ public class ConcernGraph {
 		Collection<GraphElement<IElement>> allElements = this.getAllElements();
 		monitor.beginTask("Enabling all graph elements.", allElements.size());
 		for (GraphElement elem : allElements)
-			elem.select();
+			elem.disable();
 		monitor.done();
 	}
 

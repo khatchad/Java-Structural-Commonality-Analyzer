@@ -21,38 +21,38 @@ public abstract class GraphElement<E> implements Serializable {
 
 	private static final long serialVersionUID = 1905353972018475367L;
 
-	private static final String SELECTED = "selected";
+	private static final String SELECTED = "enabled";
 
 	private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
-	private boolean selected;
+	private boolean enabled;
 
-	public GraphElement(boolean selected) {
+	public GraphElement(boolean enabled) {
 		super();
-		this.setSelected(selected);
+		this.setEnabled(enabled);
 	}
 
 	public void addPropertyChangeListener(final PropertyChangeListener l) {
 		this.changes.addPropertyChangeListener(l);
 	}
 
-	public void deselect() {
-		this.setSelected(false);
+	public void enable() {
+		this.setEnabled(false);
 	}
 
-	public void select() {
-		this.setSelected(true);
+	public void disable() {
+		this.setEnabled(true);
 	}
 
-	public boolean isSelected() {
-		return selected;
+	public boolean isEnabled() {
+		return enabled;
 	}
 
-	public void setSelected(boolean selected) {
-		final boolean oldState = this.selected;
-		this.selected = selected;
-		if (oldState != this.selected)
-			this.changes.firePropertyChange(new PropertyChangeEvent(this, SELECTED, oldState, this.selected));
+	public void setEnabled(boolean enabled) {
+		final boolean oldState = this.enabled;
+		this.enabled = enabled;
+		if (oldState != this.enabled)
+			this.changes.firePropertyChange(new PropertyChangeEvent(this, SELECTED, oldState, this.enabled));
 	}
 
 	public void removePropertyChangeListener(final PropertyChangeListener l) {
@@ -61,22 +61,22 @@ public abstract class GraphElement<E> implements Serializable {
 
 	@Override
 	public String toString() {
-		return this.selected ? "*" : "";
+		return this.enabled ? "*" : "";
 	}
 
 	public Element getXML() {
 		Element ret = new Element(this.getClass().getSimpleName());
-		ret.setAttribute(SELECTED, String.valueOf(this.isSelected()));
+		ret.setAttribute(SELECTED, String.valueOf(this.isEnabled()));
 		return ret;
 	}
 
-	public static boolean isSelected(Element elem) throws DataConversionException {
+	public static boolean isEnabled(Element elem) throws DataConversionException {
 		Attribute enabledAttribute = elem.getAttribute(SELECTED);
 		return enabledAttribute.getBooleanValue();
 	}
 
 	public GraphElement(Element elem) throws DataConversionException {
-		this.setSelected(isSelected(elem));
+		this.setEnabled(isEnabled(elem));
 	}
 
 	public abstract String getLongDescription();

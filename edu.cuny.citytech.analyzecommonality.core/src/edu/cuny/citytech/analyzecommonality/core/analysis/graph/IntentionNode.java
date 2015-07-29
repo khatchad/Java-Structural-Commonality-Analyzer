@@ -124,7 +124,7 @@ public class IntentionNode<E extends IElement> extends GraphElement<E> {
 		ret.append(" [label=\"");
 		ret.append(this.elem.getShortName());
 		ret.append('"');
-		if (this.isSelected())
+		if (this.isEnabled())
 			ret.append(",style=filled,color=red,fontcolor=white");
 		ret.append("];");
 		ret.append('\n');
