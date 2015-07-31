@@ -107,6 +107,7 @@ public class StructuralCommonalityAnalyzer extends StructuralCommonalityProcesso
 	public void dumpCSV(Appendable writer) throws IOException {
 		Stream<String> header = getCSVHeader();
 
+		// TODO: Probably need to dump more info here in the header (group by category? FindBugs settings?).
 		CSVFormat format = CSVFormat.EXCEL.withHeader(header.toArray(String[]::new)).withCommentMarker('#')
 				.withHeaderComments("Maximum analysis depth: " + this.getMaximumAnalysisDepth());
 
