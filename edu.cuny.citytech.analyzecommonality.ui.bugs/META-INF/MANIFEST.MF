@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Analyze Structural Commonality from a Bug Report 
+Bundle-SymbolicName: edu.cuny.citytech.analyzecommonality.ui.findbugs;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.cuny.citytech.analyzecommonality.ui.findbugs.Plugin
+Bundle-Vendor: New York City College of Technology, City University of New York
+Require-Bundle: org.eclipse.core.runtime,
+ edu.cuny.citytech.analyzecommonality.core;bundle-version="1.0.0",
+ edu.umd.cs.findbugs.plugin.eclipse;bundle-version="3.0.1",
+ org.eclipse.ui,
+ org.eclipse.core.resources
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.cuny.citytech.analyzecommonality.ui.findbugs
+Import-Package: org.eclipse.jdt.core,
+ org.eclipse.jdt.internal.ui.util
+Bundle-ClassPath: lib/guava-18.0.jar,
+ .

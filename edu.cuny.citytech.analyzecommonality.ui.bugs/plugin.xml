@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="edu.cuny.citytech.analyzecommonality.bugs.contribution1"
+            objectClass="org.eclipse.jdt.core.IOpenable">
+         <action
+               class="edu.cuny.citytech.analyzecommonality.ui.findbugs.popup.actions.AnalyzeBugStructuralCommonalityAction"
+               id="edu.cuny.citytech.analyzecommonality.bugs.newAction"
+               label="&amp;Analyze Structural Commonality of Bugs"
+               menubarPath="findbugs/additions"
+               tooltip="Scan selected element for bugs and analyze the structural commonality of the corresponding program elements.">
+         </action>
+         <visibility>
+               <objectClass
+                     name="org.eclipse.jdt.core.IJavaProject">
+               </objectClass>
+         </visibility>
+      </objectContribution>
+      <objectContribution
+            id="edu.cuny.citytech.analyzecommonality.ui.findbugs.contribution1"
+            objectClass="org.eclipse.jdt.core.IJavaElement">
+         <menu
+               id="edu.cuny.citytech.analyzecommonality.ui.findbugs.menu1"
+               label="JDT Tools"
+               path="additions">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               class="edu.cuny.citytech.analyzecommonality.ui.findbugs.popup.actions.DisplayHandleIdentifierAction"
+               enablesFor="1"
+               id="edu.cuny.citytech.analyzecommonality.ui.findbugs.newAction"
+               label="Display Handler Identifier"
+               menubarPath="edu.cuny.citytech.analyzecommonality.ui.findbugs.menu1/group1">
+         </action>
+      </objectContribution>
+   </extension>
+</plugin>
