@@ -1,5 +1,11 @@
 package edu.cuny.citytech.analyzecommonality.ui.findbugs.popup.actions;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -27,6 +31,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -37,6 +42,7 @@ import de.tobject.findbugs.FindbugsPlugin;
 import de.tobject.findbugs.actions.FindBugsAction;
 import de.tobject.findbugs.builder.ResourceUtils;
 import de.tobject.findbugs.builder.WorkItem;
+import edu.cuny.citytech.analyzecommonality.core.analysis.StructuralCommonalityAnalyzer;
 import edu.cuny.citytech.analyzecommonality.core.model.JavaElementSet;
 import edu.cuny.citytech.analyzecommonality.ui.findbugs.Plugin;
 import edu.umd.cs.findbugs.BugCollection;
@@ -44,6 +50,8 @@ import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.MethodAnnotation;
 
 public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
+
+	private static final Plugin plugin = Plugin.getDefault();
 
 	/*
 	 * (non-Javadoc)
@@ -75,8 +83,7 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 						try {
 							j.join();
 						} catch (InterruptedException e) {
-							Plugin.getDefault()
-									.logWarning("Error waiting for FindBugs job: " + j.getName() + " to finish.", e);
+							plugin.logWarning("Error waiting for FindBugs job: " + j.getName() + " to finish.", e);
 							e.printStackTrace();
 						}
 					});
@@ -97,7 +104,7 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 						try {
 							bugCollection = FindbugsPlugin.getBugCollection(project, monitor);
 						} catch (CoreException e) {
-							Plugin.getDefault().logWarning("Failed to get bug collection for: " + project.getName(), e);
+							plugin.logWarning("Failed to get bug collection for: " + project.getName(), e);
 							e.printStackTrace();
 						}
 
@@ -114,14 +121,41 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 
 							categoryToBugInstanceMap.keySet().forEach(category -> {
 								categoryToBugInstanceMap.get(category).forEach(bug -> {
-									Set<IJavaElement> relatedJavaElements = getRelatedJavaElements(bug, project);
-
+									Set<IJavaElement> relatedJavaElements = getRelatedJavaElements(bug, project,
+											monitor);
 									categoryToRelatedJavaElementsMap.merge(category, relatedJavaElements, Sets::union);
 								});
 							});
 
-							System.out.println(categoryToBugInstanceMap);
-							System.out.println(categoryToRelatedJavaElementsMap);
+							// at this point, we have a mapping from categories
+							// to related IJavaElements.
+							// now we can create JavaElementSets.
+							Collection<JavaElementSet> javaElementSetCollection = new LinkedHashSet<>();
+
+							categoryToBugInstanceMap.keySet().forEach(category -> {
+								Set<IJavaElement> set = categoryToRelatedJavaElementsMap.get(category);
+								javaElementSetCollection.add(new JavaElementSet(set, null, category));
+							});
+
+							// feed them to the analyzer.
+							StructuralCommonalityAnalyzer analyzer = new StructuralCommonalityAnalyzer(1);
+							try {
+								analyzer.analyze(javaElementSetCollection, monitor, null);
+							} catch (Exception e) {
+								plugin.logError("Couldn't analyze java elements.", e);
+								throw new RuntimeException(e);
+							}
+
+							Path path = Paths.get("patterns.csv");
+							plugin.logInfo("Storing results in: " + path.toAbsolutePath());
+							
+							try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
+								writer.toString();
+								analyzer.dumpCSV(writer);
+							} catch (IOException e) {
+								plugin.logWarning("Failed to write CSV file.", e);
+								throw new RuntimeException(e);
+							}
 						}
 					});
 
@@ -134,31 +168,48 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 		}
 	}
 
-	private static Set<IJavaElement> getRelatedJavaElements(BugInstance instance, IProject project) {
+	private static Set<IJavaElement> getRelatedJavaElements(BugInstance instance, IProject project,
+			IProgressMonitor monitor) {
 		Set<IJavaElement> ret = new LinkedHashSet<>();
 		IJavaProject javaProject = JavaCore.create(project);
 
-		// TODO: Analyze more than the primary method?
-		MethodAnnotation methodAnnotation = instance.getPrimaryMethod();
-
-		if (methodAnnotation != null) {
-			IType type;
+		if (javaProject != null && javaProject.exists()) {
 			try {
-				type = javaProject.findType(methodAnnotation.getClassName());
+				if (!javaProject.isOpen())
+					javaProject.open(monitor);
+				if (!javaProject.isConsistent())
+					javaProject.makeConsistent(monitor);
 			} catch (JavaModelException e) {
-				Plugin.getDefault().logWarning("Can't get type.", e);
-				e.printStackTrace();
-				return Collections.emptySet();
+				plugin.logError("Error reading project: " + project.getName() + ".", e);
+				return ret;
 			}
 
-			String methodName = methodAnnotation.getMethodName();
-			String[] signature = methodAnnotation.getMethodSignature().split(",");
-			IMethod method = type.getMethod(methodName, signature);
+			// TODO: Analyze more than the primary method?
+			MethodAnnotation methodAnnotation = instance.getPrimaryMethod();
 
-			ret.add(method);
-		} else
-			Plugin.getDefault()
-					.logWarning("Could not find related Java elements for bug instance: " + instance.getInstanceKey());
+			if (methodAnnotation != null) {
+				IType type;
+				try {
+					type = javaProject.findType(methodAnnotation.getClassName());
+				} catch (JavaModelException e) {
+					plugin.logWarning("Can't get type.", e);
+					e.printStackTrace();
+					return Collections.emptySet();
+				}
+
+				String methodName = methodAnnotation.getMethodName();
+				String methodSignature = methodAnnotation.getMethodSignature();
+				String[] parameterTypes = Signature.getParameterTypes(methodSignature);
+				IMethod method = type.getMethod(methodName, parameterTypes);
+
+				if (method.exists())
+					ret.add(method);
+				else
+					throw new IllegalStateException("Method: " + method.getElementName() + " does not exist.");
+			} else
+				plugin.logWarning(
+						"Could not find related Java elements for bug instance: " + instance.getInstanceKey());
+		}
 
 		return ret;
 	}

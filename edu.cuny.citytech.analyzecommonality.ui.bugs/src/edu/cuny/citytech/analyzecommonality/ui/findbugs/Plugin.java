@@ -22,6 +22,10 @@ public class Plugin extends AbstractUIPlugin {
 		log(Status.WARNING, message, e);
 	}
 
+	public void logError(String message, Throwable e) {
+		log(Status.ERROR, message, e);
+	}
+
 	public void log(int severity, String message, Throwable e) {
 		Status status;
 
@@ -43,5 +47,9 @@ public class Plugin extends AbstractUIPlugin {
 
 	public void log(int severity, String message) {
 		log(severity, message, null);
+	}
+
+	public void logError(String message) {
+		log(Status.ERROR, message);
 	}
 }
