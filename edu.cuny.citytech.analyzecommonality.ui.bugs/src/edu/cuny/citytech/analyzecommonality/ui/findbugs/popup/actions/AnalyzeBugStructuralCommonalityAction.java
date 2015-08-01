@@ -202,10 +202,12 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 				String[] parameterTypes = Signature.getParameterTypes(methodSignature);
 				IMethod method = type.getMethod(methodName, parameterTypes);
 
-				if (method.exists())
+				if (method.exists()) {
+					plugin.logInfo("Found method: " + methodAnnotation.getMethodName());
 					ret.add(method);
+				}
 				else
-					throw new IllegalStateException("Method: " + method.getElementName() + " does not exist.");
+					plugin.logError("Method: " + methodAnnotation.getMethodName() + " does not exist.");
 			} else
 				plugin.logWarning(
 						"Could not find related Java elements for bug instance: " + instance.getInstanceKey());
