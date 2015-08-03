@@ -47,6 +47,7 @@ import edu.cuny.citytech.analyzecommonality.core.model.JavaElementSet;
 import edu.cuny.citytech.analyzecommonality.ui.findbugs.Plugin;
 import edu.umd.cs.findbugs.BugCollection;
 import edu.umd.cs.findbugs.BugInstance;
+import edu.umd.cs.findbugs.ClassAnnotation;
 import edu.umd.cs.findbugs.MethodAnnotation;
 
 public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
@@ -142,19 +143,17 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 							try {
 								analyzer.analyze(javaElementSetCollection, monitor, null);
 							} catch (Exception e) {
-								plugin.logError("Couldn't analyze java elements.", e);
-								throw new RuntimeException(e);
+								throw new RuntimeException("Couldn't analyze java elements.", e);
 							}
 
 							Path path = Paths.get("patterns.csv");
 							plugin.logInfo("Storing results in: " + path.toAbsolutePath());
-							
+
 							try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
 								writer.toString();
 								analyzer.dumpCSV(writer);
 							} catch (IOException e) {
-								plugin.logWarning("Failed to write CSV file.", e);
-								throw new RuntimeException(e);
+								throw new RuntimeException("Failed to write CSV file.", e);
 							}
 						}
 					});
@@ -185,7 +184,7 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 			}
 
 			// TODO: Analyze more than the primary method?
-			MethodAnnotation methodAnnotation = instance.getPrimaryMethod();
+			final MethodAnnotation methodAnnotation = instance.getPrimaryMethod();
 
 			if (methodAnnotation != null) {
 				IType type;
@@ -202,17 +201,24 @@ public class AnalyzeBugStructuralCommonalityAction extends FindBugsAction {
 				String[] parameterTypes = Signature.getParameterTypes(methodSignature);
 				IMethod method = type.getMethod(methodName, parameterTypes);
 
+				final ClassAnnotation classAnnotation = instance.getPrimaryClass();
+				final String fullMethodName = getFullMethodName(methodAnnotation, classAnnotation);
+
 				if (method.exists()) {
-					plugin.logInfo("Found method: " + methodAnnotation.getMethodName());
+					plugin.logInfo("Found method: " + fullMethodName);
 					ret.add(method);
-				}
-				else
-					plugin.logError("Method: " + methodAnnotation.getMethodName() + " does not exist.");
+				} else
+					plugin.logError("Method: " + fullMethodName + " does not exist.");
 			} else
 				plugin.logWarning(
-						"Could not find related Java elements for bug instance: " + instance.getInstanceKey());
+						"Could not find related Java elements for bug instance: " + instance);
 		}
 
 		return ret;
+	}
+
+	private static String getFullMethodName(final MethodAnnotation methodAnnotation, final ClassAnnotation primaryClass) {
+		final String fullMethodName = methodAnnotation.getFullMethod(primaryClass);
+		return fullMethodName;
 	}
 }
