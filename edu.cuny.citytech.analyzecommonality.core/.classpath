@@ -13,6 +13,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/ca.mcgill.cs.swevo.jayfx"/>
-	<classpathentry kind="lib" path="/ca.mcgill.cs.swevo.jayfx/lib/jdom-2.0.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

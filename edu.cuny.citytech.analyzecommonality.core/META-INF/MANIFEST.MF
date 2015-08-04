@@ -10,7 +10,9 @@ Import-Package: org.eclipse.core.resources,
  org.eclipse.jdt.core,
  org.eclipse.jdt.core.dom,
  org.eclipse.jdt.core.search,
- org.eclipse.jdt.internal.core
+ org.eclipse.jdt.internal.core,
+ org.jdom2,
+ org.jdom2.output
 Export-Package: edu.cuny.citytech.analyzecommonality.core.analysis,
  edu.cuny.citytech.analyzecommonality.core.model
 Require-Bundle: ca.mcgill.cs.swevo.jayfx,
@@ -18,7 +20,6 @@ Require-Bundle: ca.mcgill.cs.swevo.jayfx,
 Bundle-ClassPath: lib/antlr-runtime-3.0.jar,
  lib/drools-compiler-4.0.4.jar,
  lib/drools-core-4.0.4.jar,
- lib/jdom-2.0.6.jar,
  lib/mvel14-1.2.21.jar,
  .,
  lib/commons-csv-1.1.jar
